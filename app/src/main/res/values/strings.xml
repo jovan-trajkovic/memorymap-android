@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">MemoryMap</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">List View Fragment</string>
 </resources>
