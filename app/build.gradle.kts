@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace = "trajkovic.pora.memorymap"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "trajkovic.pora.memorymap"
@@ -46,6 +46,7 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.fragment.ktx)
     implementation(libs.androidx.room.runtime)
     ksp(libs.androidx.room.compiler)
     testImplementation(libs.junit)

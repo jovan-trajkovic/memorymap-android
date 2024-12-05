@@ -1,16 +1,18 @@
-package trajkovic.pora.memorymap
+package trajkovic.pora.memorymap.data
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import java.util.UUID
 
 @Entity(tableName = "location_logs")
 data class LocationLog(
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    @PrimaryKey val id: String = UUID.randomUUID().toString(),
     val name: String,
     val description: String,
     val rating: Float,
     val latitude: Double,
     val longitude: Double,
-    val imagePath: String
+    val thumbnailPath: String?
+    //val imagePaths: List<String>?
 )
 
