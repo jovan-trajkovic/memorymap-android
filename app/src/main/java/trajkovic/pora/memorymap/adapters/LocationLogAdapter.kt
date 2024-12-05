@@ -26,7 +26,7 @@ class LocationLogAdapter(
         with(holder.binding) {
             locationName.text = log.name
             locationRating.text = String.format(locale, log.rating.toString())
-            //TODO: Set image from log.imagePaths[0]
+            //TODO: Set image from log.thumbnailPath
             root.setOnClickListener { onItemClick(log) }
         }
         //holder.itemView.setOnClickListener { onItemClick(log) }
