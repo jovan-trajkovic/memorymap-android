@@ -16,6 +16,5 @@ data class LocationLog(
     val thumbnailPath: String?,
     val dateAdded:Long = Calendar.getInstance().timeInMillis
     //TODO: When showing the date, convert it from timeInMilis to show as a date
-    //val imagePaths: List<String>?
 )
 

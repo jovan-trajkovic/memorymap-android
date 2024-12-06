@@ -6,16 +6,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import trajkovic.pora.memorymap.MyApplication
 import trajkovic.pora.memorymap.adapters.LocationLogAdapter
 import trajkovic.pora.memorymap.data.LocationLog
 import trajkovic.pora.memorymap.databinding.FragmentListBinding
 
-/**
- * A simple [Fragment] subclass.
- * Use the [ListFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class ListFragment : Fragment() {
     private var _binding: FragmentListBinding? = null
     private val binding get() = _binding!!
@@ -31,18 +30,23 @@ class ListFragment : Fragment() {
     ): View {
         _binding = FragmentListBinding.inflate(inflater, container, false)
         return binding.root
-        //return inflater.inflate(R.layout.fragment_list, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val app = requireActivity().application as MyApplication
+        val dao = app.database.dao
         val adapter = LocationLogAdapter(logs) { log->
             //TODO: Handle List Item click
             Toast.makeText(requireContext(),"ITEM CLICKED: ${log.name}", Toast.LENGTH_SHORT).show()
         }
         binding.logList.layoutManager = LinearLayoutManager(requireContext())
         binding.logList.adapter = adapter
+
+        lifecycleScope.launch(Dispatchers.IO) {
+            dao.insertLog(logs[0])
+        }
     }
 
     override fun onDestroyView() {
@@ -50,11 +54,4 @@ class ListFragment : Fragment() {
         _binding = null
     }
 
-    /*companion object {
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            ListFragment().apply {
-            }
-    }*/
 }
