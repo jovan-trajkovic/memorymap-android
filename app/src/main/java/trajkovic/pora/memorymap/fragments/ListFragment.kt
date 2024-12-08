@@ -10,6 +10,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import trajkovic.pora.memorymap.MyApplication
 import trajkovic.pora.memorymap.adapters.LocationLogAdapter
 import trajkovic.pora.memorymap.data.LocationLog
@@ -19,9 +20,11 @@ class ListFragment : Fragment() {
     private var _binding: FragmentListBinding? = null
     private val binding get() = _binding!!
 
+    private lateinit var queriedLogs: List<LocationLog>
+
     private val logs = listOf( // TODO: Replace with data from database
-        LocationLog(name = "Eiffel Tower", description = "Visited in Paris", rating = 5f, latitude = 48.8584, longitude = 2.2945, thumbnailPath = null),
-        LocationLog(name = "Grand Canyon", description = "Amazing views", rating = 4.5f, latitude = 36.1069, longitude = -112.1129, thumbnailPath = null)
+        LocationLog(id = "75023080-917a-47f9-b3c3-85ec214185b2",name = "Eiffel Tower", description = "Visited in Paris", rating = 5f, latitude = 48.8584, longitude = 2.2945, thumbnailPath = null),
+        LocationLog(id = "75023080-917a-47f9-b3c3-85ec214185b5", name = "Grand Canyon", description = "Amazing views", rating = 4.5f, latitude = 36.1069, longitude = -112.1129, thumbnailPath = null)
     )
 
     override fun onCreateView(
@@ -37,15 +40,25 @@ class ListFragment : Fragment() {
 
         val app = requireActivity().application as MyApplication
         val dao = app.database.dao
-        val adapter = LocationLogAdapter(logs) { log->
-            //TODO: Handle List Item click
-            Toast.makeText(requireContext(),"ITEM CLICKED: ${log.name}", Toast.LENGTH_SHORT).show()
-        }
-        binding.logList.layoutManager = LinearLayoutManager(requireContext())
-        binding.logList.adapter = adapter
 
         lifecycleScope.launch(Dispatchers.IO) {
-            dao.insertLog(logs[0])
+            dao.insertLogs(logs)
+            queriedLogs = dao.getAllLogs()
+
+
+            withContext(Dispatchers.Main) {
+                val adapter = LocationLogAdapter(queriedLogs) { log ->
+                    //TODO: Handle List Item click
+                    Toast.makeText(
+                        requireContext(),
+                        "ITEM CLICKED: ${log.name}",
+                        Toast.LENGTH_SHORT
+                    )
+                        .show()
+                }
+                binding.logList.layoutManager = LinearLayoutManager(requireContext())
+                binding.logList.adapter = adapter
+            }
         }
     }
 

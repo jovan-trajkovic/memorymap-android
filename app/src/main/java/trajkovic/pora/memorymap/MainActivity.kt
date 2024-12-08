@@ -5,7 +5,9 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.fragment.app.Fragment
 import trajkovic.pora.memorymap.databinding.ActivityMainBinding
+import trajkovic.pora.memorymap.fragments.AddLogFragment
 import trajkovic.pora.memorymap.fragments.ListFragment
 
 class MainActivity : AppCompatActivity() {
@@ -22,7 +24,19 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        val fragment = ListFragment()
+        replaceFragment(ListFragment())
+
+        binding.bottomNavigationView.setOnItemSelectedListener { item ->
+            when(item.itemId){
+                R.id.listMenuButton -> { replaceFragment(ListFragment()); true }
+                R.id.addMenuButton -> { replaceFragment(AddLogFragment()); true }
+                R.id.mapMenuButton -> false
+                else -> false
+            }
+        }
+    }
+
+    private fun replaceFragment(fragment: Fragment) {
         supportFragmentManager.beginTransaction().replace(binding.fragmentContainerView.id,fragment).commit()
     }
 }
