@@ -25,14 +25,14 @@ Jetpack uporablja Apache 2.0 licenco za odprto kodo, kar omogoča uporabnikom da
 ## Primeri uporabe:
 - Prvo je potrebno vključiti androidx:room knjižnico in room compiler z kotlin anotacijo
 - Nato je potrebno zgraditi podatkovno bazo in definirati entitete, ki predstavljajo tabele v bazi in DAO (Data Access Object), ki določajo, kako bo potekala komunikacija z bazo.
-- Bazo definiramo in določimo imena tabel:
+- Bazo definiramo in določimo imena tabel:<br>
 ![database](./README%20images/database.png "Definirana baza")
-- Definiramo entitete, ki nam bodo predstavljale tabele v bazi in objekte v kodi: 
+- Definiramo entitete, ki nam bodo predstavljale tabele v bazi in objekte v kodi: <br>
 ![entity](./README%20images/entity.png "Definirana entiteta")
-- Definiramo DAO razrede in komunikacijo z bazo: 
+- Definiramo DAO razrede in komunikacijo z bazo: <br>
 ![DAO](./README%20images/dao.png "Definiran DAO")
-- V razredu MyApplication je kreiran objekt podatkovne baze, ki vsebuje objekt DAO. Lahko mu dostopamo iz katerega koli fragmenta in komuniciramo z bazo: 
+- V razredu MyApplication je kreiran objekt podatkovne baze, ki vsebuje objekt DAO. Lahko mu dostopamo iz katerega koli fragmenta in komuniciramo z bazo: <br>
 ![usage](./README%20images/usage.png "Uporaba")
 - Vsaka komunikacija mora biti narejena asinhrono, v korutini na niti, ki ni glavna.
-- Podatki so lokalno shranjeni na napravi in bazo lahko odpremo v upravljalniku na računalniku: 
+- Podatki so lokalno shranjeni na napravi in bazo lahko odpremo v upravljalniku na računalniku: <br>
 ![database_contents](./README%20images/database_contents.png "Vsebina baze")
