@@ -37,6 +37,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun replaceFragment(fragment: Fragment) {
+        supportFragmentManager.popBackStack()
         supportFragmentManager.beginTransaction().replace(binding.fragmentContainerView.id,fragment).commit()
     }
 }

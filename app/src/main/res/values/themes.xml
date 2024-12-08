@@ -3,6 +3,7 @@
     <style name="Base.Theme.MemoryMap" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="fontFamily">@font/ubuntu</item>
     </style>
 
     <style name="Theme.MemoryMap" parent="Base.Theme.MemoryMap" />
