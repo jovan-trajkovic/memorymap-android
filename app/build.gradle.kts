@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.devtools.ksp)
     id("kotlin-parcelize")
+    alias(libs.plugins.google.android.libraries.mapsplatform.secrets.gradle.plugin)
 }
 
 android {
@@ -49,6 +50,7 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.fragment.ktx)
     implementation(libs.androidx.room.runtime)
+    implementation(libs.play.services.maps)
     ksp(libs.androidx.room.compiler)
     implementation(libs.squareup.picasso)
     implementation(libs.kotlinx.coroutines.android)

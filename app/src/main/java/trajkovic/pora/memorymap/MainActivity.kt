@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity() {
             when(item.itemId){
                 R.id.listMenuButton -> { replaceFragment(ListFragment()); true }
                 R.id.addMenuButton -> { replaceFragment(AddLogFragment()); true }
-                R.id.mapMenuButton -> false
+                R.id.mapMenuButton -> { replaceFragment(MapsFragment()); true }
                 else -> false
             }
         }
