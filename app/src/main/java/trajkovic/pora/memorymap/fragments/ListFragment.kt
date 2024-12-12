@@ -4,9 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.replace
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.coroutines.Dispatchers
@@ -55,13 +53,6 @@ class ListFragment : Fragment() {
                     val fragment = LogDetailsFragment()
                     fragment.arguments = bundle
                     parentFragmentManager.beginTransaction().replace(R.id.fragmentContainerView,fragment).addToBackStack(null).commit()
-                    //TODO: Handle List Item click
-                    /*Toast.makeText(
-                        requireContext(),
-                        "ITEM CLICKED: ${log.name}",
-                        Toast.LENGTH_SHORT
-                    )
-                        .show()*/
                 }
                 binding.logList.layoutManager = LinearLayoutManager(requireContext())
                 binding.logList.adapter = adapter

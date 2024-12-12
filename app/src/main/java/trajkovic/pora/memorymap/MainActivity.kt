@@ -12,7 +12,7 @@ import trajkovic.pora.memorymap.fragments.ListFragment
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
-    //TODO: Add support for LiveData in the Adapter, Create MyApplication with the database instance
+    //TODO: Add fragment tags for saving and restoring fragments
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
