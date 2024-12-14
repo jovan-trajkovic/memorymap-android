@@ -17,6 +17,7 @@ import androidx.work.WorkManager
 import trajkovic.pora.memorymap.databinding.ActivityMainBinding
 import trajkovic.pora.memorymap.fragments.AddLogFragment
 import trajkovic.pora.memorymap.fragments.ListFragment
+import trajkovic.pora.memorymap.fragments.MapsFragment
 import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {

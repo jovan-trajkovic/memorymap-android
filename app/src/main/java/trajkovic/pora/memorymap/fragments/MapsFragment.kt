@@ -1,4 +1,4 @@
-package trajkovic.pora.memorymap
+package trajkovic.pora.memorymap.fragments
 
 import android.content.pm.PackageManager
 import androidx.fragment.app.Fragment
@@ -15,7 +15,6 @@ import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.location.LocationServices
 
 import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.CameraPosition
@@ -23,8 +22,9 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import trajkovic.pora.memorymap.MyApplication
+import trajkovic.pora.memorymap.R
 import trajkovic.pora.memorymap.data.LocationLog
-import trajkovic.pora.memorymap.fragments.LogDetailsFragment
 
 class MapsFragment : Fragment() {
 
@@ -141,7 +141,7 @@ class MapsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        button = view.findViewById(R.id.detailsButton)
+        button = view.findViewById(R.id.detailsBtn)
         savedInstanceState?.getParcelable<CameraPosition>("camera_position")?.let {
             cameraPosition = it
             Toast.makeText(context,"Set previous cameraPosition", Toast.LENGTH_SHORT).show()

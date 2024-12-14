@@ -39,7 +39,8 @@ class AddLogFragment : Fragment() {
 
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 rating = progress + 1
-                binding.ratingLabel.text = "Rating: $rating"
+                val ratingText = "Rating: $rating"
+                binding.ratingLabel.text = ratingText
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}

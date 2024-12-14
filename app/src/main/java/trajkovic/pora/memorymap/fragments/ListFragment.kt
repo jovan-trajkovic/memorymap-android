@@ -22,7 +22,7 @@ class ListFragment : Fragment() {
 
     private lateinit var queriedLogs: List<LocationLog>
 
-    private val logs = listOf( // TODO: Replace with data from database
+    private val logs = listOf(
         LocationLog(id = "75023080-917a-47f9-b3c3-85ec214185b2",name = "Eiffel Tower", description = "Visited in Paris", rating = 5f, latitude = 48.8584, longitude = 2.2945, thumbnailPath = null),
         LocationLog(id = "75023080-917a-47f9-b3c3-85ec214185b5", name = "Grand Canyon", description = "Amazing views", rating = 4.5f, latitude = 36.1069, longitude = -112.1129, thumbnailPath = null)
     )

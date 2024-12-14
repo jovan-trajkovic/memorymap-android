@@ -35,12 +35,16 @@ class LogDetailsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val calendar = Calendar.getInstance()
         calendar.timeInMillis = log.dateAdded
+        val ratingText = "Rating: ${log.rating}"
+        val latitudeText = "Latitude: ${log.latitude}"
+        val longitudeText = "Longitude: ${log.longitude}"
+        val dateAddedText = "Date added: ${calendar.get(Calendar.DATE)}.${calendar.get(Calendar.MONTH) + 1}.${calendar.get(Calendar.YEAR)}."
         binding.titleLabel.text = log.name
         binding.descriptionLabel.text = log.description
-        binding.ratingLabel.text = "Rating: ${log.rating}"
-        binding.latitudeLabel.text = "Latitude: ${log.latitude}"
-        binding.longitudeLabel.text = "Longitude: ${log.longitude}"
-        binding.dateAddedLabel.text = "Date added: ${calendar.get(Calendar.DATE)}.${calendar.get(Calendar.MONTH) + 1}.${calendar.get(Calendar.YEAR)}."
+        binding.ratingLabel.text = ratingText
+        binding.latitudeLabel.text = latitudeText
+        binding.longitudeLabel.text = longitudeText
+        binding.dateAddedLabel.text = dateAddedText
     }
 
     override fun onDestroyView() {

@@ -1,3 +1,18 @@
 <resources>
     <string name="app_name">MemoryMap</string>
+    <string name="add_log_fragment_name">Add New Location Log</string>
+    <string name="log_details_fragment_name">Location Log Details</string>
+    <string name="add_log_button">Add Log</string>
+    <string name="title_label">Log Title</string>
+    <string name="description_label">Log Description</string>
+    <string name="rating_label">Rating</string>
+    <string name="rating_label_initial">Rating: 5</string>
+    <string name="latitude_label">Latitude</string>
+    <string name="longitude_label">Longitude</string>
+    <string name="date_added_label">Date added</string>
+    <string name="see_details_button">See Details</string>
+    <string name="location_name">Location name</string>
+    <string name="list_menu_label">List</string>
+    <string name="add_log_menu_label">Add Log</string>
+    <string name="map_menu_label">Map</string>
 </resources>

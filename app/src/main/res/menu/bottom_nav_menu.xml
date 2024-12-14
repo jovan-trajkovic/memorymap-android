@@ -4,17 +4,17 @@
 
     <item
         android:id="@+id/listMenuButton"
-        android:title="List"
+        android:title="@string/list_menu_label"
         android:icon="@drawable/baseline_list_24"
         />
     <item
         android:id="@+id/addMenuButton"
-        android:title="Add Log"
+        android:title="@string/add_log_menu_label"
         android:icon="@drawable/outline_add_box_24"
         />
     <item
         android:id="@+id/mapMenuButton"
-        android:title="Map"
+        android:title="@string/map_menu_label"
         android:icon="@drawable/baseline_gps_fixed_24"
         />
 </menu>
