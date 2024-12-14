@@ -23,6 +23,9 @@ interface LocationLogDao {
     @Query("SELECT * FROM location_logs ORDER BY dateAdded DESC")
     fun getAllLogs(): List<LocationLog>
 
+    @Query("SELECT * FROM location_logs ORDER BY dateAdded DESC LIMIT 1")
+    fun getLastLog(): LocationLog
+
     @Query("SELECT * FROM image_paths WHERE locationLogId = :id")
     fun getImages(id: String): List<ImagePaths>
 }

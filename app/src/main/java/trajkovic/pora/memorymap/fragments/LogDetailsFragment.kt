@@ -40,7 +40,7 @@ class LogDetailsFragment : Fragment() {
         binding.ratingLabel.text = "Rating: ${log.rating}"
         binding.latitudeLabel.text = "Latitude: ${log.latitude}"
         binding.longitudeLabel.text = "Longitude: ${log.longitude}"
-        binding.dateAddedLabel.text = "Date added: ${calendar.get(Calendar.DATE)}.${calendar.get(Calendar.MONTH)}.${calendar.get(Calendar.YEAR)}."
+        binding.dateAddedLabel.text = "Date added: ${calendar.get(Calendar.DATE)}.${calendar.get(Calendar.MONTH) + 1}.${calendar.get(Calendar.YEAR)}."
     }
 
     override fun onDestroyView() {
