@@ -11,7 +11,7 @@ import trajkovic.pora.memorymap.databinding.ListItemBinding
 
 class LocationLogAdapter(
     private var logs: List<LocationLog>,
-    private val onItemClick: (LocationLog) -> Unit
+    private val onItemClick: (Int) -> Unit
 ) :
     RecyclerView.Adapter<LocationLogAdapter.LocationViewHolder>() {
 
@@ -35,7 +35,7 @@ class LocationLogAdapter(
             locationRating.text = String.format(locale, log.rating.toString())
             //TODO: Set image from log.thumbnailPath - cannot load, probably permissions
             Picasso.get().load(log.thumbnailPath).placeholder(R.drawable.travel_journal).fit().into(listImage)
-            root.setOnClickListener { onItemClick(log) }
+            root.setOnClickListener { onItemClick(position) }
         }
     }
 

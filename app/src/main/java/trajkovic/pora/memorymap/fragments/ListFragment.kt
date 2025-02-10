@@ -43,11 +43,13 @@ class ListFragment : Fragment() {
             LocationLogViewModelFactory((requireActivity().application as MyApplication).database.dao)
         }
 
-        val adapter = LocationLogAdapter(emptyList()) { log ->
-            val bundle = Bundle()
-            bundle.putParcelable("log", log)
-            val fragment = LogDetailsFragment()
-            fragment.arguments = bundle
+        val adapter = LocationLogAdapter(emptyList()) { index ->
+            val bundle = Bundle().apply {
+                putInt("log_index", index)
+            }
+            val fragment = LogDetailsFragment().apply {
+                arguments = bundle
+            }
             parentFragmentManager.beginTransaction()
                 .replace(R.id.fragmentContainerView, fragment)
                 .addToBackStack(null)

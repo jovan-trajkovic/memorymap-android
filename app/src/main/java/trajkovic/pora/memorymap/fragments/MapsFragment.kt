@@ -112,16 +112,22 @@ class MapsFragment : Fragment() {
                 marker.showInfoWindow()
 
                 button.visibility = View.VISIBLE
-                marker.title.let {
+                marker.title.let { title ->
                     button.setOnClickListener {
                         cameraPosition = googleMap.cameraPosition
-                        val bundle = Bundle()
-                        bundle.putParcelable("log", queriedLogs.find {it.name == marker.title})
-                        val fragment = LogDetailsFragment()
-                        fragment.arguments = bundle
-                        parentFragmentManager.beginTransaction()
-                            .replace(R.id.fragmentContainerView, fragment).addToBackStack(null)
-                            .commit()
+
+                        val logIndex = queriedLogs.indexOfFirst { it.name == title }
+                        if (logIndex != -1) {
+                            val bundle = Bundle().apply {
+                                putInt("log_index", logIndex)
+                            }
+                            val fragment = LogDetailsFragment().apply {
+                                arguments = bundle
+                            }
+                            parentFragmentManager.beginTransaction()
+                                .replace(R.id.fragmentContainerView, fragment).addToBackStack(null)
+                                .commit()
+                        }
                     }
                 }
                 true
