@@ -1,13 +1,11 @@
 package trajkovic.pora.memorymap.fragments
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import trajkovic.pora.memorymap.R
+import androidx.fragment.app.Fragment
 import trajkovic.pora.memorymap.data.LocationLog
-import trajkovic.pora.memorymap.databinding.FragmentAddLogBinding
 import trajkovic.pora.memorymap.databinding.FragmentLogDetailsBinding
 import java.util.Calendar
 

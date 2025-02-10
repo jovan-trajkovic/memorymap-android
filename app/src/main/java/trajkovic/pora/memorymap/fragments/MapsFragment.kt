@@ -1,8 +1,6 @@
 package trajkovic.pora.memorymap.fragments
 
 import android.content.pm.PackageManager
-import androidx.fragment.app.Fragment
-
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,17 +9,21 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.gms.location.LocationServices
-
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import trajkovic.pora.memorymap.LocationLogViewModel
+import trajkovic.pora.memorymap.LocationLogViewModelFactory
 import trajkovic.pora.memorymap.MyApplication
 import trajkovic.pora.memorymap.R
 import trajkovic.pora.memorymap.data.LocationLog
@@ -147,10 +149,16 @@ class MapsFragment : Fragment() {
             Toast.makeText(context,"Set previous cameraPosition", Toast.LENGTH_SHORT).show()
         }
 
-        val app = (requireActivity().application) as MyApplication
-        val dao = app.database.dao
-        lifecycleScope.launch(Dispatchers.IO) {
-            queriedLogs = dao.getAllLogs()
+        val viewModel: LocationLogViewModel by activityViewModels {
+            LocationLogViewModelFactory((requireActivity().application as MyApplication).database.dao)
+        }
+
+        lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.logs.collect { logs ->
+                    queriedLogs = logs
+                }
+            }
         }
 
         if(ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {

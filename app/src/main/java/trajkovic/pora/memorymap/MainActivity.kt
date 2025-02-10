@@ -23,7 +23,6 @@ import java.util.concurrent.TimeUnit
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     //TODO: Add fragment tags for saving and restoring fragments
-    //TODO: MAKE STRINGS FOLDER
 
     private val requestNotificationPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
