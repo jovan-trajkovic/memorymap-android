@@ -1,5 +1,7 @@
 package trajkovic.pora.memorymap.adapters
 
+import android.app.AlertDialog
+import android.content.Context
 import android.os.LocaleList
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -11,7 +13,8 @@ import trajkovic.pora.memorymap.databinding.ListItemBinding
 
 class LocationLogAdapter(
     private var logs: List<LocationLog>,
-    private val onItemClick: (Int) -> Unit
+    private val onItemClick: (Int) -> Unit,
+    private val onDelete: (LocationLog) -> Unit
 ) :
     RecyclerView.Adapter<LocationLogAdapter.LocationViewHolder>() {
 
@@ -20,6 +23,23 @@ class LocationLogAdapter(
     fun updateLogs(logs: List<LocationLog>) {
         this.logs = logs
         notifyDataSetChanged()
+    }
+
+    private fun deleteConfirmationDialog(context: Context, log: LocationLog) {
+        val builder = AlertDialog.Builder(context)
+        builder.setTitle("Delete Item")
+        builder.setMessage("Are you sure you want to delete ${log.name}?")
+
+        builder.setPositiveButton("Yes") { dialog, _ ->
+            onDelete(log)
+            dialog.dismiss()
+        }
+
+        builder.setNegativeButton("No") { dialog, _ ->
+            dialog.dismiss()
+        }
+
+        builder.show()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LocationViewHolder {
@@ -35,7 +55,13 @@ class LocationLogAdapter(
             locationRating.text = String.format(locale, log.rating.toString())
             //TODO: Set image from log.thumbnailPath - cannot load, probably permissions
             Picasso.get().load(log.thumbnailPath).placeholder(R.drawable.travel_journal).fit().into(listImage)
+
             root.setOnClickListener { onItemClick(position) }
+
+            root.setOnLongClickListener {
+                deleteConfirmationDialog(holder.itemView.context, log)
+                true//sets that the long click has ended
+            }
         }
     }
 

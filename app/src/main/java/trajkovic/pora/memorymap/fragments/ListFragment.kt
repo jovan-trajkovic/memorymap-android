@@ -43,18 +43,22 @@ class ListFragment : Fragment() {
             LocationLogViewModelFactory((requireActivity().application as MyApplication).database.dao)
         }
 
-        val adapter = LocationLogAdapter(emptyList()) { index ->
-            val bundle = Bundle().apply {
-                putInt("log_index", index)
-            }
-            val fragment = LogDetailsFragment().apply {
-                arguments = bundle
-            }
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.fragmentContainerView, fragment)
-                .addToBackStack(null)
-                .commit()
-        }
+        val adapter = LocationLogAdapter(emptyList(),
+            onItemClick = { index ->
+                val bundle = Bundle().apply {
+                    putInt("log_index", index)
+                }
+                val fragment = LogDetailsFragment().apply {
+                    arguments = bundle
+                }
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.fragmentContainerView, fragment)
+                    .addToBackStack(null)
+                    .commit()
+            },
+            onDelete = { log ->
+                viewModel.deleteLog(log)
+            })
 
         binding.logList.layoutManager = LinearLayoutManager(requireContext())
         binding.logList.adapter = adapter
