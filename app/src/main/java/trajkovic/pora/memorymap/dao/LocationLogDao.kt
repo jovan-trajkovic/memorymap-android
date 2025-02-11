@@ -5,6 +5,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import kotlinx.coroutines.flow.Flow
 import trajkovic.pora.memorymap.data.ImagePaths
 import trajkovic.pora.memorymap.data.LocationLog
 
@@ -12,20 +13,20 @@ import trajkovic.pora.memorymap.data.LocationLog
 interface LocationLogDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    fun insertLog(log: LocationLog)
+    suspend fun insertLog(log: LocationLog)
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    fun insertLogs(logs: List<LocationLog>)
+    suspend fun insertLogs(logs: List<LocationLog>)
 
     @Delete
-    fun deleteLog(log: LocationLog)
+    suspend fun deleteLog(log: LocationLog)
 
     @Query("SELECT * FROM location_logs ORDER BY dateAdded DESC")
-    fun getAllLogs(): List<LocationLog>
+    fun getAllLogs(): Flow<List<LocationLog>>
 
     @Query("SELECT * FROM location_logs ORDER BY dateAdded DESC LIMIT 1")
     fun getLastLog(): LocationLog
 
     @Query("SELECT * FROM image_paths WHERE locationLogId = :id")
-    fun getImages(id: String): List<ImagePaths>
+    fun getImages(id: String): Flow<List<ImagePaths>>
 }

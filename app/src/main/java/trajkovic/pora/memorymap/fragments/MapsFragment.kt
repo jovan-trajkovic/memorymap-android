@@ -1,8 +1,7 @@
 package trajkovic.pora.memorymap.fragments
 
+import android.Manifest
 import android.content.pm.PackageManager
-import androidx.fragment.app.Fragment
-
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,42 +10,44 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.gms.location.LocationServices
-
 import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import trajkovic.pora.memorymap.LocationLogViewModel
+import trajkovic.pora.memorymap.LocationLogViewModelFactory
 import trajkovic.pora.memorymap.MyApplication
 import trajkovic.pora.memorymap.R
 import trajkovic.pora.memorymap.data.LocationLog
 
 class MapsFragment : Fragment() {
 
-    private lateinit var queriedLogs: List<LocationLog>
     private lateinit var button: Button
     private var cameraPosition: CameraPosition? = null
+
+    private var tempGoogleMap: GoogleMap? = null
 
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
-        if (permissions[android.Manifest.permission.ACCESS_FINE_LOCATION] == true ||
-            permissions[android.Manifest.permission.ACCESS_COARSE_LOCATION] == true) {
-            enableMyLocation()
-        } else {
-            Toast.makeText(context, "Location permissions denied.", Toast.LENGTH_SHORT).show()
-        }
-    }
+        if (permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true ||
+            permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true) {
 
-    private fun enableMyLocation() {
-        if (ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
-            mapFragment?.getMapAsync(callback)
+            tempGoogleMap?.let { enableLocationOnMap(it) }
+            tempGoogleMap = null
+        } else {
+            tempGoogleMap = null
+            Toast.makeText(context, "Location permissions denied.", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -62,68 +63,72 @@ class MapsFragment : Fragment() {
          */
         if (ContextCompat.checkSelfPermission(
                 requireContext(),
-                android.Manifest.permission.ACCESS_FINE_LOCATION
+                Manifest.permission.ACCESS_FINE_LOCATION
             ) == PackageManager.PERMISSION_GRANTED
         ) {
-            try {
-                googleMap.isMyLocationEnabled = true
-                val fusedLocationClient =
-                    LocationServices.getFusedLocationProviderClient(requireContext())
-                if (cameraPosition != null) {
-                    googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition!!))
-                } else {
-                    fusedLocationClient.lastLocation.addOnSuccessListener { lastLocation ->
-                        if (lastLocation != null) {
-                            val userLocation = LatLng(lastLocation.latitude, lastLocation.longitude)
-                            googleMap.moveCamera(
-                                CameraUpdateFactory.newLatLngZoom(
-                                    userLocation,
-                                    15f
-                                )
-                            )
-                        } else {
-                            Toast.makeText(
-                                context,
-                                "Unable to retrieve location.",
-                                Toast.LENGTH_SHORT
-                            )
-                                .show()
-                        }
-                    }
-                }
-            } catch (e: SecurityException) {
-                e.printStackTrace()
-                Toast.makeText(context, "Unable to enable My Location. Permission denied.", Toast.LENGTH_SHORT).show()
-            }
+            enableLocationOnMap(googleMap)
         } else {
             Toast.makeText(
                 context,
                 "Location permissions are required to show your location.",
                 Toast.LENGTH_SHORT
             ).show()
+
+            tempGoogleMap = googleMap
+            requestPermissionLauncher.launch(
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                )
+            )
+
         }
 
-        for (log in queriedLogs){
-            val logMarker = MarkerOptions().position(LatLng(log.latitude,log.longitude)).title(log.name)
-            googleMap.addMarker(logMarker)
-            googleMap.setOnMarkerClickListener { marker ->
-                marker.showInfoWindow()
+        val viewModel: LocationLogViewModel by activityViewModels {
+            LocationLogViewModelFactory((requireActivity().application as MyApplication).database.dao)
+        }
+        var queriedLogs: List<LocationLog>
 
-                button.visibility = View.VISIBLE
-                marker.title.let {
-                    button.setOnClickListener {
-                        cameraPosition = googleMap.cameraPosition
-                        val bundle = Bundle()
-                        bundle.putParcelable("log", queriedLogs.find {it.name == marker.title})
-                        val fragment = LogDetailsFragment()
-                        fragment.arguments = bundle
-                        parentFragmentManager.beginTransaction()
-                            .replace(R.id.fragmentContainerView, fragment).addToBackStack(null)
-                            .commit()
+        lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.logs.collect { logs ->
+                    queriedLogs = logs
+
+                    googleMap.clear()
+
+                    for ((index,log) in queriedLogs.withIndex()) {
+                        val logMarker = MarkerOptions()
+                            .position(LatLng(log.latitude, log.longitude))
+                            .title(log.name)
+
+                        googleMap.addMarker(logMarker)?.tag = index
                     }
                 }
-                true
             }
+        }
+
+        googleMap.setOnMarkerClickListener { marker ->
+            marker.showInfoWindow()
+
+            button.visibility = View.VISIBLE
+            button.setOnClickListener {
+                cameraPosition = googleMap.cameraPosition
+
+                val logIndex =
+                    marker.tag as? Int
+                if (logIndex != -1) {
+                    val bundle = Bundle().apply {
+                        putInt("log_index", logIndex?: -1)
+                    }
+                    val fragment = LogDetailsFragment().apply {
+                        arguments = bundle
+                    }
+                    parentFragmentManager.beginTransaction()
+                        .replace(R.id.fragmentContainerView, fragment).addToBackStack(null)
+                        .commit()
+                }
+            }
+            true
         }
 
         googleMap.setOnMapClickListener {
@@ -147,28 +152,40 @@ class MapsFragment : Fragment() {
             Toast.makeText(context,"Set previous cameraPosition", Toast.LENGTH_SHORT).show()
         }
 
-        val app = (requireActivity().application) as MyApplication
-        val dao = app.database.dao
-        lifecycleScope.launch(Dispatchers.IO) {
-            queriedLogs = dao.getAllLogs()
-        }
-
-        if(ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissionLauncher.launch(
-                arrayOf(
-                    android.Manifest.permission.ACCESS_FINE_LOCATION,
-                    android.Manifest.permission.ACCESS_COARSE_LOCATION
-                )
-            )
-        } else {
-            enableMyLocation()
-        }
+        val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
+        mapFragment?.getMapAsync(callback)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         cameraPosition?.let {
             outState.putParcelable("camera_position", it)
+        }
+    }
+
+    private fun enableLocationOnMap(googleMap: GoogleMap) {
+        try {
+            googleMap.isMyLocationEnabled = true
+            val fusedLocationClient =
+                LocationServices.getFusedLocationProviderClient(requireContext())
+
+            if (cameraPosition != null) {
+                googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition!!))
+            } else {
+                fusedLocationClient.lastLocation.addOnSuccessListener { lastLocation ->
+                    if (lastLocation != null) {
+                        val userLocation = LatLng(lastLocation.latitude, lastLocation.longitude)
+                        googleMap.moveCamera(
+                            CameraUpdateFactory.newLatLngZoom(userLocation, 12f)
+                        )
+                    } else {
+                        Toast.makeText(context, "Unable to retrieve location.", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+        } catch (e: SecurityException) {
+            e.printStackTrace()
+            Toast.makeText(context, "Unable to enable My Location. Permission denied.", Toast.LENGTH_SHORT).show()
         }
     }
 }
