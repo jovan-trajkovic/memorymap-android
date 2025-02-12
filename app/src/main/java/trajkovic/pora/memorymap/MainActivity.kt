@@ -4,6 +4,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -14,10 +15,10 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import trajkovic.pora.memorymap.databinding.ActivityMainBinding
-import trajkovic.pora.memorymap.fragments.AddLogFragment
 import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
@@ -53,30 +54,34 @@ class MainActivity : AppCompatActivity() {
                 requestNotificationPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
             }
             else{
+                //tempNotification()
                 scheduleNotifications()
             }
         }
         else
         {
+            //tempNotification()
             scheduleNotifications()
         }
 
         val navController = binding.fragmentContainerView.getFragment<NavHostFragment>().findNavController()
         val bottomNavigationView = binding.bottomNavigationView
+        bottomNavigationView.setupWithNavController(navController)
 
-        if (intent?.action == "OPEN_FRAGMENT") {
-            val fragmentName = intent.getStringExtra("FRAGMENT_TO_OPEN")
-            if (fragmentName == "AddLogFragment") {
-                navController.navigate(AddLogFragment().id)
-                //binding.bottomNavigationView.selectedItemId = R.id.addMenuButton
+        //todo: check what's wrong with the notifications
+        onBackPressedDispatcher.addCallback(this) {
+            val currentDestination = navController.currentDestination?.id
+            val topLevelDestinations = setOf(R.id.listFragment, R.id.mapsFragment, R.id.addLogFragment)
+            if (currentDestination in topLevelDestinations) {
+                finish()
+            } else {
+                navController.popBackStack()
             }
         }
-        //todo: fix back stack on bottomNavigationView switching, check notifications
-        bottomNavigationView.setupWithNavController(navController)
     }
 
     private fun scheduleNotifications() {
-        val workRequest = PeriodicWorkRequestBuilder<ReminderWorker>(1, TimeUnit.DAYS)
+        val workRequest = PeriodicWorkRequestBuilder<ReminderWorker>(15, TimeUnit.MINUTES)
             .setInitialDelay(1, TimeUnit.MINUTES).build()
 
         WorkManager.getInstance(this).enqueueUniquePeriodicWork(
@@ -84,5 +89,13 @@ class MainActivity : AppCompatActivity() {
             ExistingPeriodicWorkPolicy.KEEP,
             workRequest
         )
+    }
+
+    private fun tempNotification() {
+        val oneTimeRequest = OneTimeWorkRequestBuilder<ReminderWorker>()
+            .setInitialDelay(10, TimeUnit.SECONDS) // Short delay for testing
+            .build()
+
+        WorkManager.getInstance(this).enqueue(oneTimeRequest)
     }
 }
