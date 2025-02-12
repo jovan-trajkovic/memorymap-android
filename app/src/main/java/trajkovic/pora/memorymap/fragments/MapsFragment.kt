@@ -15,6 +15,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -114,18 +115,11 @@ class MapsFragment : Fragment() {
             button.setOnClickListener {
                 cameraPosition = googleMap.cameraPosition
 
-                val logIndex =
-                    marker.tag as? Int
-                if (logIndex != -1) {
-                    val bundle = Bundle().apply {
-                        putInt("log_index", logIndex?: -1)
-                    }
-                    val fragment = LogDetailsFragment().apply {
-                        arguments = bundle
-                    }
-                    parentFragmentManager.beginTransaction()
-                        .replace(R.id.fragmentContainerView, fragment).addToBackStack(null)
-                        .commit()
+                val logIndex = marker.tag as? Int
+                if(logIndex != null) {
+                    val action =
+                        MapsFragmentDirections.actionMapsFragmentToLogDetailsFragment(logIndex)
+                    findNavController().navigate(action)
                 }
             }
             true

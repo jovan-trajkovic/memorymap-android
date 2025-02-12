@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.devtools.ksp)
     id("kotlin-parcelize")
     alias(libs.plugins.google.android.libraries.mapsplatform.secrets.gradle.plugin)
+    alias(libs.plugins.navigation.safeargs.kotlin)
 }
 
 android {
@@ -57,6 +58,8 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.play.services.location)
     implementation(libs.androidx.work.runtime)
+    implementation(libs.navigation.fragment.ktx)
+    implementation(libs.androidx.navigation.ui.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
