@@ -9,9 +9,12 @@ import android.widget.SeekBar.OnSeekBarChangeListener
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.MarkerOptions
 import trajkovic.pora.memorymap.LocationLogViewModel
 import trajkovic.pora.memorymap.LocationLogViewModelFactory
 import trajkovic.pora.memorymap.MyApplication
+import trajkovic.pora.memorymap.R
 import trajkovic.pora.memorymap.data.LocationLog
 import trajkovic.pora.memorymap.databinding.FragmentAddLogBinding
 
@@ -35,7 +38,7 @@ class AddLogFragment : Fragment() {
             LocationLogViewModelFactory((requireActivity().application as MyApplication).database.dao)
         }
 
-        var rating = 0;
+        var rating = 0
         binding.ratingSeekBar.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
 
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
@@ -48,19 +51,38 @@ class AddLogFragment : Fragment() {
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}
         })
 
+        var latitude: Double? = null
+        var longitude: Double? = null
+        val mapFragment = childFragmentManager.findFragmentById(R.id.addLogMapView) as SupportMapFragment?
+
+        mapFragment?.getMapAsync { googleMap ->
+            googleMap.setOnMapClickListener { latLng ->
+                googleMap.clear()
+                googleMap.addMarker(MarkerOptions().position(latLng))
+                latitude = latLng.latitude
+                longitude = latLng.longitude
+            }
+
+            googleMap.setOnCameraMoveStartedListener {//enables map scrolling on the horizontal orientation
+                mapFragment.view?.parent?.requestDisallowInterceptTouchEvent(true)
+            }
+
+            googleMap.setOnCameraIdleListener {
+                mapFragment.view?.parent?.requestDisallowInterceptTouchEvent(false)
+            }
+        }
+
         binding.addLogBtn.setOnClickListener {
             val title = binding.titleField.text.toString()
             val description = binding.descriptionField.text.toString()
-            val latitude = binding.latitudeField.text.toString().toDoubleOrNull() ?: 0.0
-            val longitude = binding.longitudeField.text.toString().toDoubleOrNull() ?: 0.0
 
-            if (title.isNotBlank() && description.isNotBlank() && (-90 <= latitude && latitude <= 90) && (-180 <= longitude && longitude <= 180)) {
+            if (title.isNotBlank() && description.isNotBlank() && latitude != null && longitude != null) {
                 val newLog = LocationLog(
                     name = title,
                     description = description,
                     rating = rating.toFloat(),
-                    latitude = latitude,
-                    longitude = longitude,
+                    latitude = latitude!!,
+                    longitude = longitude!!,
                     thumbnailPath = null
                 )
                 viewModel.addLog(newLog)
@@ -69,9 +91,10 @@ class AddLogFragment : Fragment() {
 
                 binding.titleField.text.clear()
                 binding.descriptionField.text.clear()
-                binding.latitudeField.text.clear()
-                binding.longitudeField.text.clear()
                 binding.ratingSeekBar.progress = 4
+                mapFragment?.getMapAsync { googleMap->
+                    googleMap.clear()
+                }
             } else {
                 Toast.makeText(requireContext(), "Data was added incorrectly", Toast.LENGTH_SHORT).show()
             }
