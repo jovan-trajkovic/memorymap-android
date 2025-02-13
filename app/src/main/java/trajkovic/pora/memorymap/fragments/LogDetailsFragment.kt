@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.navArgs
 import trajkovic.pora.memorymap.LocationLogViewModel
 import trajkovic.pora.memorymap.LocationLogViewModelFactory
 import trajkovic.pora.memorymap.MyApplication
@@ -30,7 +31,8 @@ class LogDetailsFragment : Fragment() {
         val viewModel: LocationLogViewModel by activityViewModels {
             LocationLogViewModelFactory((requireActivity().application as MyApplication).database.dao)
         }
-        val index = arguments?.getInt("log_index") ?: -1
+        val args: LogDetailsFragmentArgs by navArgs()
+        val index = args.logIndex
         val log = viewModel.logs.value.getOrNull(index)
 
         log?.let {

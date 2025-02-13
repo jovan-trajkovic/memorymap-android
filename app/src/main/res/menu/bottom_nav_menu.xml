@@ -3,17 +3,17 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/listMenuButton"
+        android:id="@id/listFragment"
         android:title="@string/list_menu_label"
         android:icon="@drawable/baseline_list_24"
         />
     <item
-        android:id="@+id/addMenuButton"
+        android:id="@id/addLogFragment"
         android:title="@string/add_log_menu_label"
         android:icon="@drawable/outline_add_box_24"
         />
     <item
-        android:id="@+id/mapMenuButton"
+        android:id="@id/mapsFragment"
         android:title="@string/map_menu_label"
         android:icon="@drawable/baseline_gps_fixed_24"
         />

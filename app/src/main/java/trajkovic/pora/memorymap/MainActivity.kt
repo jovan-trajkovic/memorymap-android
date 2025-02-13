@@ -4,25 +4,25 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.ui.setupWithNavController
 import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import trajkovic.pora.memorymap.databinding.ActivityMainBinding
-import trajkovic.pora.memorymap.fragments.AddLogFragment
-import trajkovic.pora.memorymap.fragments.ListFragment
-import trajkovic.pora.memorymap.fragments.MapsFragment
 import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
-    //TODO: Add fragment tags for saving and restoring fragments
 
     private val requestNotificationPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
@@ -54,41 +54,35 @@ class MainActivity : AppCompatActivity() {
                 requestNotificationPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
             }
             else{
+                //tempNotification()
                 scheduleNotifications()
             }
         }
         else
         {
+            //tempNotification()
             scheduleNotifications()
         }
 
-        if (intent?.action == "OPEN_FRAGMENT") {
-            val fragmentName = intent.getStringExtra("FRAGMENT_TO_OPEN")
-            if (fragmentName == "AddLogFragment") {
-                replaceFragment(AddLogFragment())
-                binding.bottomNavigationView.selectedItemId = R.id.addMenuButton
+        val navController = binding.fragmentContainerView.getFragment<NavHostFragment>().findNavController()
+        val bottomNavigationView = binding.bottomNavigationView
+        bottomNavigationView.setupWithNavController(navController)
+
+        //todo: check what's wrong with the notifications
+        onBackPressedDispatcher.addCallback(this) {
+            val currentDestination = navController.currentDestination?.id
+            val topLevelDestinations = setOf(R.id.listFragment, R.id.mapsFragment, R.id.addLogFragment)
+            if (currentDestination in topLevelDestinations) {
+                finish()
+            } else {
+                navController.popBackStack()
             }
         }
-        else {
-            replaceFragment(ListFragment())
-        }
-
-        binding.bottomNavigationView.setOnItemSelectedListener { item ->
-            when(item.itemId){
-                R.id.listMenuButton -> { replaceFragment(ListFragment()); true }
-                R.id.addMenuButton -> { replaceFragment(AddLogFragment()); true }
-                R.id.mapMenuButton -> { replaceFragment(MapsFragment()); true }
-                else -> false
-            }
-        }
-    }
-
-    private fun replaceFragment(fragment: Fragment) {
-        supportFragmentManager.popBackStack()
-        supportFragmentManager.beginTransaction().replace(binding.fragmentContainerView.id,fragment).commit()
     }
 
     private fun scheduleNotifications() {
+        //WorkManager.getInstance(this).cancelUniqueWork("ReminderWorker")
+
         val workRequest = PeriodicWorkRequestBuilder<ReminderWorker>(1, TimeUnit.DAYS)
             .setInitialDelay(1, TimeUnit.MINUTES).build()
 
@@ -97,5 +91,13 @@ class MainActivity : AppCompatActivity() {
             ExistingPeriodicWorkPolicy.KEEP,
             workRequest
         )
+    }
+
+    private fun tempNotification() {
+        val oneTimeRequest = OneTimeWorkRequestBuilder<ReminderWorker>()
+            .setInitialDelay(10, TimeUnit.SECONDS) // Short delay for testing
+            .build()
+
+        WorkManager.getInstance(this).enqueue(oneTimeRequest)
     }
 }

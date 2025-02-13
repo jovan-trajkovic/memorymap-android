@@ -9,12 +9,12 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.coroutines.launch
 import trajkovic.pora.memorymap.LocationLogViewModel
 import trajkovic.pora.memorymap.LocationLogViewModelFactory
 import trajkovic.pora.memorymap.MyApplication
-import trajkovic.pora.memorymap.R
 import trajkovic.pora.memorymap.adapters.LocationLogAdapter
 import trajkovic.pora.memorymap.data.LocationLog
 import trajkovic.pora.memorymap.databinding.FragmentListBinding
@@ -45,16 +45,8 @@ class ListFragment : Fragment() {
 
         val adapter = LocationLogAdapter(emptyList(),
             onItemClick = { index ->
-                val bundle = Bundle().apply {
-                    putInt("log_index", index)
-                }
-                val fragment = LogDetailsFragment().apply {
-                    arguments = bundle
-                }
-                parentFragmentManager.beginTransaction()
-                    .replace(R.id.fragmentContainerView, fragment)
-                    .addToBackStack(null)
-                    .commit()
+                val action = ListFragmentDirections.actionListFragmentToLogDetailsFragment(index)
+                findNavController().navigate(action)
             },
             onDelete = { log ->
                 viewModel.deleteLog(log)

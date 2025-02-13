@@ -4,6 +4,8 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
@@ -22,7 +24,9 @@ class ReminderWorker(context: Context, params: WorkerParameters) :
         val currentDate = Calendar.getInstance().timeInMillis
         val daysSinceLastLog = (currentDate - latestLog.dateAdded) / (1000 * 60 * 60 * 24)
 
-        if (daysSinceLastLog >= 5) {
+        //Log.d("ReminderWorker", "Days since last log: $daysSinceLastLog")
+
+        if (daysSinceLastLog >= 7) {
             sendReminderNotification(context)
         }
 
@@ -30,10 +34,10 @@ class ReminderWorker(context: Context, params: WorkerParameters) :
     }
 
     private fun sendReminderNotification(context: Context) {
-        val intent = Intent(context, MainActivity::class.java).apply {
-            action = "OPEN_FRAGMENT"
-            putExtra("FRAGMENT_TO_OPEN", "AddLogFragment")
-            flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
+
+        val intent = Intent(Intent.ACTION_VIEW).apply {
+            data = Uri.parse("app://memorymap/addlog")
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
 
         val pendingIntent = PendingIntent.getActivity(
