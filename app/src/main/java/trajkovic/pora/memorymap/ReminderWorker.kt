@@ -24,9 +24,9 @@ class ReminderWorker(context: Context, params: WorkerParameters) :
         val currentDate = Calendar.getInstance().timeInMillis
         val daysSinceLastLog = (currentDate - latestLog.dateAdded) / (1000 * 60 * 60 * 24)
 
-        Log.d("ReminderWorker", "Days since last log: $daysSinceLastLog")
+        //Log.d("ReminderWorker", "Days since last log: $daysSinceLastLog")
 
-        if (daysSinceLastLog >= 1) {
+        if (daysSinceLastLog >= 7) {
             sendReminderNotification(context)
         }
 

@@ -81,7 +81,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun scheduleNotifications() {
-        val workRequest = PeriodicWorkRequestBuilder<ReminderWorker>(15, TimeUnit.MINUTES)
+        //WorkManager.getInstance(this).cancelUniqueWork("ReminderWorker")
+
+        val workRequest = PeriodicWorkRequestBuilder<ReminderWorker>(1, TimeUnit.DAYS)
             .setInitialDelay(1, TimeUnit.MINUTES).build()
 
         WorkManager.getInstance(this).enqueueUniquePeriodicWork(
