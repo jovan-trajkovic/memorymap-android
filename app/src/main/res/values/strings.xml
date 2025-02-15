@@ -15,4 +15,5 @@
     <string name="list_menu_label">List</string>
     <string name="add_log_menu_label">Add Log</string>
     <string name="map_menu_label">Map</string>
+    <string name="add_photos">Add Photos</string>
 </resources>

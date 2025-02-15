@@ -53,7 +53,6 @@ class LocationLogAdapter(
         with(holder.binding) {
             locationName.text = log.name
             locationRating.text = String.format(locale, log.rating.toString())
-            //TODO: Set image from log.thumbnailPath - cannot load, probably permissions
             Picasso.get().load(log.thumbnailPath).placeholder(R.drawable.travel_journal).fit().into(listImage)
 
             root.setOnClickListener { onItemClick(position) }
