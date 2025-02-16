@@ -92,7 +92,7 @@ class AddLogFragment : Fragment() {
             lifecycleScope.launch {
                 val title = binding.titleField.text.toString()
                 val description = binding.descriptionField.text.toString()
-                val thumbnailPath = copyImagesToAppFiles().firstOrNull()
+                val thumbnailPaths = copyImagesToAppFiles()
 
                 if (title.isNotBlank() && description.isNotBlank() && latitude != null && longitude != null) {
                     val newLog = LocationLog(
@@ -101,7 +101,7 @@ class AddLogFragment : Fragment() {
                         rating = rating.toFloat(),
                         latitude = latitude!!,
                         longitude = longitude!!,
-                        thumbnailPath = thumbnailPath?.toString()
+                        thumbnailPath = if(thumbnailPaths.isNotEmpty()) thumbnailPaths[0].toString() else null
                     )
                     viewModel.addLog(newLog)
 
@@ -149,6 +149,7 @@ class AddLogFragment : Fragment() {
             selectedImagesAdapter.notifyDataSetChanged()
             binding.thumbnailsRecyclerView.visibility = View.VISIBLE
         } else {
+            selectedImageUris.clear()
             Toast.makeText(requireContext(), "No images selected", Toast.LENGTH_SHORT).show()
             binding.thumbnailsRecyclerView.visibility = View.GONE
         }

@@ -7,13 +7,14 @@
     android:orientation="vertical"
     android:background="?android:selectableItemBackground">
 
-    <ImageView
+    <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/listImage"
         android:layout_width="100dp"
         android:layout_height="100dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:src="@color/black" />
+        android:src="@color/black"
+        app:shapeAppearanceOverlay="@style/ImageView.Corner"/>
 
     <TextView
         android:id="@+id/locationName"

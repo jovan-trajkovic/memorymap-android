@@ -53,7 +53,8 @@ class LocationLogAdapter(
         with(holder.binding) {
             locationName.text = log.name
             locationRating.text = String.format(locale, log.rating.toString())
-            Picasso.get().load(log.thumbnailPath).placeholder(R.drawable.travel_journal).fit().into(listImage)
+            Picasso.get().load(log.thumbnailPath).placeholder(R.drawable.travel_journal).
+            resize(300,300).centerCrop().into(listImage)
 
             root.setOnClickListener { onItemClick(position) }
 
