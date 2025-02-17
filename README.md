@@ -5,9 +5,13 @@ MemoryMap is a mobile application that allows users to document and relive their
 ## Technologies used
 
  - **Kotlin**: The app is written in Kotlin as a Native Android application.
+
  - **Maps SDK for Android**: Used for integrating Google Maps into the application.
+
  - **Room**: Used for storing data in a local SQLite database.
+
  - **Picasso**: Used for loading and displaying images in the application.
+
 
 ## Features
 
