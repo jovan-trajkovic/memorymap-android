@@ -1,5 +1,7 @@
 package trajkovic.pora.memorymap.fragments
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -54,7 +56,7 @@ class AddLogFragment : Fragment() {
             LocationLogViewModelFactory((requireActivity().application as MyApplication).database.dao)
         }
 
-        var rating = 0
+        var rating = 5
         binding.ratingSeekBar.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
 
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
@@ -92,7 +94,7 @@ class AddLogFragment : Fragment() {
             lifecycleScope.launch {
                 val title = binding.titleField.text.toString()
                 val description = binding.descriptionField.text.toString()
-                val thumbnailPaths = copyImagesToAppFiles()
+                val imageUris = copyImagesToAppFiles()
 
                 if (title.isNotBlank() && description.isNotBlank() && latitude != null && longitude != null) {
                     val newLog = LocationLog(
@@ -101,11 +103,10 @@ class AddLogFragment : Fragment() {
                         rating = rating.toFloat(),
                         latitude = latitude!!,
                         longitude = longitude!!,
-                        thumbnailPath = if(thumbnailPaths.isNotEmpty()) thumbnailPaths[0].toString() else null
+                        thumbnailPath = if(imageUris.isNotEmpty()) imageUris[0].toString() else null
                     )
                     viewModel.addLog(newLog)
-
-                    //todo: add images to the database - create function in the dao
+                    viewModel.addImagesForLog(imageUris, newLog.id)
 
                     Toast.makeText(requireContext(), "Log added!", Toast.LENGTH_SHORT).show()
 
@@ -115,6 +116,8 @@ class AddLogFragment : Fragment() {
                     mapFragment?.getMapAsync { googleMap ->
                         googleMap.clear()
                     }
+                    selectedImageUris.clear()
+                    binding.thumbnailsRecyclerView.visibility = View.GONE
                 } else {
                     Toast.makeText(
                         requireContext(),
@@ -157,23 +160,20 @@ class AddLogFragment : Fragment() {
 
     private suspend fun copyImagesToAppFiles(): List<Uri> = withContext(Dispatchers.IO) {
         val savedUris = mutableListOf<Uri>()
-        val appContext = requireContext().applicationContext
 
         selectedImageUris.forEach { uri ->
             try {
-                val inputStream = appContext.contentResolver.openInputStream(uri)
-                val fileName = "log_image_${System.currentTimeMillis()}.jpg"
-                val file = File(appContext.filesDir, fileName)
+                val inputStream = requireContext().contentResolver.openInputStream(uri)
+                val bitmap = BitmapFactory.decodeStream(inputStream)
 
-                inputStream?.use { input ->
-                    FileOutputStream(file).use { output ->
-                        input.copyTo(output)
-                    }
-                }
+                val fileName = "IMG_${System.currentTimeMillis()}.jpg"
+                val file = File(requireContext().filesDir, fileName)
+                val outputStream = FileOutputStream(file)
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 70, outputStream)
+                outputStream.flush()
+                outputStream.close()
 
-                // Get the URI of the saved file
-                val savedUri = Uri.fromFile(file)
-                savedUris.add(savedUri)
+                savedUris.add(Uri.fromFile(file))
             } catch (e: Exception) {
                 Log.e("AddLogFragment", "Error saving image: ${e.message}")
                 Toast.makeText(requireContext(), "Failed to save an image", Toast.LENGTH_SHORT).show()

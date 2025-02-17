@@ -56,7 +56,6 @@ class LogDetailsFragment : Fragment() {
             binding.logImagesRecyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
 
             if(log.thumbnailPath != null) {
-                //todo: fix scrolling
                 viewModel.getImages(log.id).observe(viewLifecycleOwner) { imageList ->
                     Log.d("DEBUG", imageList.toString())
                     logPicturesAdapter.submitList(imageList)
