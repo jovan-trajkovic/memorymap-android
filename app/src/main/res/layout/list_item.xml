@@ -1,26 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="2dp"
+    android:padding="8dp"
     android:orientation="vertical"
     android:background="?android:selectableItemBackground">
 
-    <ImageView
+    <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/listImage"
         android:layout_width="100dp"
         android:layout_height="100dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:src="@color/black" />
+        android:src="@color/black"
+        app:shapeAppearanceOverlay="@style/ImageView.Corner"/>
 
     <TextView
         android:id="@+id/locationName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/location_name"
+        android:layout_marginStart="12dp"
         app:layout_constraintStart_toEndOf="@+id/listImage"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@id/locationRating"/>
@@ -30,6 +31,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/rating_label"
+        android:layout_marginStart="12dp"
         app:layout_constraintBottom_toBottomOf="@+id/listImage"
         app:layout_constraintStart_toEndOf="@+id/listImage"
         app:layout_constraintTop_toBottomOf="@+id/locationName" />

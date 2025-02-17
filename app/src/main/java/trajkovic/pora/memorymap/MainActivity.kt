@@ -68,7 +68,6 @@ class MainActivity : AppCompatActivity() {
         val bottomNavigationView = binding.bottomNavigationView
         bottomNavigationView.setupWithNavController(navController)
 
-        //todo: check what's wrong with the notifications
         onBackPressedDispatcher.addCallback(this) {
             val currentDestination = navController.currentDestination?.id
             val topLevelDestinations = setOf(R.id.listFragment, R.id.mapsFragment, R.id.addLogFragment)

@@ -21,6 +21,9 @@ interface LocationLogDao {
     @Delete
     suspend fun deleteLog(log: LocationLog)
 
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertPhotos(photos: List<ImagePaths>)
+
     @Query("SELECT * FROM location_logs ORDER BY dateAdded DESC")
     fun getAllLogs(): Flow<List<LocationLog>>
 
